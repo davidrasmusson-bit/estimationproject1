@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Field Operations Platform — Stängselbutiken x Raincode</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#4075c1;--blue-l:#6fa3f5;--blue2:#1e3a6e;--bdim:rgba(64,117,193,.09);
+  --teal:#0e7c6e;--teal-l:#1da896;--teal-bg:#e8f7f5;
+  --amb:#c97a00;--amb-bg:#fdf3e3;
+  --ink:#0d0d14;--ink2:#1f2030;
+  --bg:#ffffff;--s1:#f7f8fa;
+  --tx:#0d0d14;--t2:#2d3748;--t3:#5a6a82;
+  --br:#e2e6ef;--line-d:#2a2c3e;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);font-weight:400;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--tx)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--br)}
+.nav-brand{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--blue)}
+.nav-links{display:flex;gap:22px}
+.nav-links a{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--tx)}
+
+.deck{scroll-snap-type:y proximity}
+.slide{min-height:100vh;display:flex;flex-direction:column;justify-content:center;scroll-snap-align:start;position:relative;padding:88px 0 72px;overflow:hidden}
+.shell{width:100%;max-width:1120px;margin:0 auto;padding:0 60px;position:relative;z-index:2}
+.light{background:var(--bg)}
+.s1bg{background:var(--s1)}
+.dark{background:var(--ink);color:#eef1f7}
+.dark .grid-tx{position:absolute;inset:0;background-image:linear-gradient(var(--line-d) 1px,transparent 1px),linear-gradient(90deg,var(--line-d) 1px,transparent 1px);background-size:60px 60px;opacity:.35;z-index:1;mask-image:radial-gradient(ellipse 100% 75% at 50% 50%,#000,transparent)}
+
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;color:var(--blue)}
+.eyebrow::before{content:"";width:28px;height:2px;background:var(--blue);flex-shrink:0}
+.dark .eyebrow{color:var(--blue-l)}.dark .eyebrow::before{background:var(--blue-l)}
+
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.8vw,48px);line-height:1.1;margin-bottom:28px;color:var(--tx)}
+h2 em{font-style:italic;color:var(--blue)}
+.dark h2{color:#eef1f7}.dark h2 em{color:var(--blue-l)}
+
+.lead{font-size:16px;line-height:1.7;color:var(--t2);max-width:680px;margin-bottom:36px}
+.dark .lead{color:rgba(238,241,247,.6)}
+.rule{width:44px;height:2px;background:var(--blue);margin-bottom:24px}
+.dark .rule{background:var(--blue-l)}
+.pageno{position:absolute;bottom:24px;right:48px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3)}
+.dark .pageno{color:rgba(238,241,247,.3)}
+.brandmark{position:absolute;bottom:24px;left:48px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;font-weight:700;color:var(--blue)}
+.dark .brandmark{color:rgba(238,241,247,.3)}
+
+/* COVER */
+.cover-wrap{display:grid;grid-template-columns:1fr 360px;gap:2px;min-height:calc(100vh - 120px)}
+.cover-left{padding:52px 0 40px;display:flex;flex-direction:column;justify-content:space-between;padding-right:52px}
+.cover-kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.cover-kicker::before{content:"";width:28px;height:2px;background:var(--blue);flex-shrink:0}
+.cover-h1{font-family:var(--serif);font-weight:400;font-size:clamp(38px,5vw,68px);line-height:1.02;color:var(--tx);margin-bottom:24px}
+.cover-h1 em{font-style:italic;color:var(--blue)}
+.cover-sub{font-size:17px;color:var(--t2);line-height:1.65;max-width:500px;margin-bottom:44px}
+.cover-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:2px}
+.cover-stat{background:var(--s1);padding:22px 24px}
+.cs-n{font-family:var(--serif);font-size:36px;font-weight:400;color:var(--blue);line-height:1}
+.cs-l{font-size:12px;color:var(--t3);margin-top:6px;line-height:1.4}
+.cover-right{background:var(--ink);padding:52px 40px;display:flex;flex-direction:column;justify-content:space-between}
+.cr-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:5px}
+.cr-val{font-size:14px;font-weight:500;color:rgba(255,255,255,.75);margin-bottom:24px;line-height:1.4}
+.cr-divider{width:32px;height:2px;background:var(--blue);margin:28px 0}
+.cr-tagline{font-family:var(--serif);font-size:20px;font-weight:400;font-style:italic;color:rgba(255,255,255,.5);line-height:1.45}
+
+/* PAIN CARDS */
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.pain-card{background:var(--bg);padding:36px 32px;border-top:3px solid var(--br)}
+.pain-card.a1{border-color:var(--amb)}.pain-card.a2{border-color:var(--blue)}.pain-card.a3{border-color:var(--t3)}
+.pain-num{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+.pain-card.a1 .pain-num{color:var(--amb)}.pain-card.a2 .pain-num{color:var(--blue)}.pain-card.a3 .pain-num{color:var(--t3)}
+.pain-q{font-family:var(--serif);font-size:19px;font-weight:400;font-style:italic;margin-bottom:14px;line-height:1.3;color:var(--tx)}
+.pain-b{font-size:14px;line-height:1.65;color:var(--t2)}
+
+/* SHARED TWO-COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.card{background:var(--s1);padding:36px 32px}
+.card.dk{background:var(--blue2);color:#eef1f7}
+.card-tag{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--blue);margin-bottom:12px;display:block}
+.card.dk .card-tag{color:var(--blue-l)}
+.card h3{font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:12px;line-height:1.2;color:var(--tx)}
+.card.dk h3{color:#eef1f7}
+.card > p{font-size:14px;line-height:1.65;color:var(--t2);margin-bottom:16px}
+.card.dk > p{color:rgba(238,241,247,.65)}
+.cl{list-style:none}
+.cl li{font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.cl li:last-child{border-bottom:none}
+.cl li::before{content:"—";color:var(--blue);flex-shrink:0;font-weight:600}
+.card.dk .cl li{color:rgba(238,241,247,.7);border-color:rgba(255,255,255,.1)}
+.card.dk .cl li::before{color:var(--blue-l)}
+.span-note{background:var(--bdim);border-left:3px solid var(--blue);padding:14px 18px;margin-top:2px;grid-column:span 2;font-size:13px;color:var(--t2);line-height:1.6}
+.span-note strong{color:var(--blue)}
+.device-box{background:var(--bg);border:1px solid var(--br);padding:14px 18px;margin-bottom:2px}
+.device-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}
+
+/* MEASURE MODES */
+.measure-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.mcard{background:var(--bg);padding:32px 28px}
+.mcard.mc1{border-top:3px solid var(--teal)}.mcard.mc2{border-top:3px solid var(--blue)}.mcard.mc3{border-top:3px solid var(--amb)}
+.mc-device{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;padding:3px 8px;display:inline-block}
+.mcard.mc1 .mc-device{background:var(--teal-bg);color:var(--teal)}.mcard.mc2 .mc-device{background:var(--bdim);color:var(--blue)}.mcard.mc3 .mc-device{background:var(--amb-bg);color:var(--amb)}
+.mc-title{font-family:var(--serif);font-size:21px;font-weight:400;margin-bottom:10px;line-height:1.2;color:var(--tx)}
+.mc-body{font-size:13px;color:var(--t2);line-height:1.65;margin-bottom:14px}
+.ml{list-style:none}
+.ml li{font-size:12px;color:var(--t2);padding:6px 0;border-bottom:1px solid var(--br);display:flex;gap:8px;line-height:1.5}
+.ml li:last-child{border-bottom:none}
+.ml li::before{content:"—";color:var(--t3);flex-shrink:0}
+.measure-note{background:var(--s1);padding:16px 20px;margin-top:2px;grid-column:span 3;font-size:13px;color:var(--t2);line-height:1.6;border-left:3px solid var(--br)}
+
+/* QUESTIONNAIRE */
+.q-wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.q-step-intro{background:var(--bdim);border-left:3px solid var(--blue);padding:14px 18px;margin-bottom:24px}
+.q-step-intro p{font-size:14px;color:var(--t2);line-height:1.6}
+.q-terrain-rows{display:flex;flex-direction:column;gap:2px}
+.q-trow{background:var(--s1);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.q-trow .qt-l{font-size:13px;font-weight:500;color:var(--tx)}
+.q-trow .qt-r{font-size:12px;color:var(--t3);text-align:right;max-width:180px;line-height:1.4}
+.f-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.f-rows{display:flex;flex-direction:column;gap:2px}
+.f-row{background:var(--s1);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.f-row .fl{font-size:13px;font-weight:500;color:var(--tx)}
+.f-row .fr{font-size:12px;color:var(--t3)}
+.f-row.hl{background:var(--teal-bg)}.f-row.hl .fl{color:var(--teal)}.f-row.hl .fr{color:var(--teal-l)}
+.bc-pull{font-size:12px;color:var(--t3);margin-top:12px;line-height:1.6;padding-left:4px;border-left:2px solid var(--br)}
+
+/* FIELD APP */
+.field-wrap{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.field-main{background:var(--blue2);color:#eef1f7;padding:40px 36px}
+.fa-tag{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:14px}
+.field-main h3{font-family:var(--serif);font-size:26px;font-weight:400;color:#eef1f7;margin-bottom:14px;line-height:1.15}
+.field-main p{font-size:14px;color:rgba(238,241,247,.6);line-height:1.7;margin-bottom:24px}
+.field-main .cl li{border-color:rgba(255,255,255,.1);color:rgba(238,241,247,.75)}
+.field-main .cl li::before{color:var(--blue-l)}
+.field-steps{background:var(--s1);padding:40px 36px;display:flex;flex-direction:column;gap:2px}
+.fs-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--br)}
+.fstep{background:var(--bg);padding:16px 20px;display:flex;gap:16px;align-items:flex-start;border-left:3px solid var(--br)}
+.fstep.on{border-left-color:var(--blue)}
+.fstep-n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--blue);min-width:24px;margin-top:2px}
+.fstep-t{font-weight:600;font-size:13px;color:var(--tx);margin-bottom:3px}
+.fstep-b{font-size:12px;color:var(--t3);line-height:1.5}
+.field-note{background:var(--bdim);border-left:3px solid var(--blue);padding:14px 18px;margin-top:2px;grid-column:span 2;font-size:13px;color:var(--t2);line-height:1.6}
+.field-note strong{color:var(--blue)}
+
+/* DISPATCH */
+/* reuses two-col card cl span-note */
+
+/* FLOW */
+.flow-bar{position:absolute;top:30px;left:30px;right:30px;height:2px;background:var(--br);z-index:0}
+.flow-row{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;z-index:1;margin-bottom:32px}
+.flow-row.seven{grid-template-columns:repeat(7,1fr)}
+.fstop{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 8px}
+.fdot{width:60px;height:60px;border-radius:50%;background:var(--bg);border:2px solid var(--br);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--t3);margin-bottom:14px;flex-shrink:0}
+.fstop.on .fdot{background:var(--blue);border-color:var(--blue);color:#fff}
+.ft{font-weight:600;font-size:13px;color:var(--tx);margin-bottom:5px;line-height:1.3}
+.fb{font-size:11px;color:var(--t3);line-height:1.5}
+.flow-note{background:var(--teal-bg);border-left:3px solid var(--teal);padding:16px 20px}
+.flow-note strong{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:5px}
+.flow-note p{font-size:13px;color:var(--t2);line-height:1.6}
+
+/* TECH */
+.tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.tech-block{background:var(--s1);padding:26px 28px}
+.tb-title{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--br)}
+.t-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--br);gap:12px}
+.t-row:last-child{border-bottom:none}
+.t-row .tk{font-size:13px;font-weight:600;color:var(--tx);min-width:120px}
+.t-row .tv{font-size:12px;color:var(--t3);text-align:right;line-height:1.5}
+.dep-box{background:var(--amb-bg);border-left:3px solid var(--amb);padding:16px 20px;margin-top:2px;grid-column:span 2}
+.dep-box strong{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amb);display:block;margin-bottom:6px}
+.dep-box p{font-size:13px;color:var(--t2);line-height:1.6}
+
+/* ROADMAP */
+.rm-outer{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.rm-col{display:flex;flex-direction:column}
+.rm-col-head{padding:28px 28px 24px;border-top:4px solid}
+.rm-col.ph1 .rm-col-head{background:var(--blue);border-color:var(--blue)}
+.rm-col.ph2 .rm-col-head{background:var(--blue2);border-color:var(--blue2)}
+.rm-col.ph3 .rm-col-head{background:var(--ink2);border-color:var(--ink2)}
+.rm-tag{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px}
+.rm-title{font-family:var(--serif);font-size:24px;font-weight:400;color:#fff;line-height:1.1;margin-bottom:6px}
+.rm-time{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:14px;font-family:var(--mono)}
+.rm-desc{font-size:13px;color:rgba(255,255,255,.65);line-height:1.65}
+.rm-col-body{background:var(--s1);flex:1;padding:20px 28px}
+.rm-list{list-style:none}
+.rm-list li{font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.rm-list li:last-child{border-bottom:none}
+.rm-list li::before{content:"—";color:var(--t3);flex-shrink:0;font-size:11px}
+.rm-note{background:var(--bdim);border-left:3px solid var(--blue);padding:14px 18px;margin-top:2px;grid-column:span 3;font-size:13px;color:var(--t2);line-height:1.6}
+.rm-note strong{color:var(--blue)}
+
+/* INVESTMENT */
+.invest-wrap{display:grid;grid-template-columns:auto 1fr;gap:2px;margin-bottom:2px}
+.invest-price-block{background:var(--blue);color:#fff;padding:48px 52px;display:flex;flex-direction:column;justify-content:center;min-width:300px}
+.ip-label{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:16px}
+.ip-num{font-family:var(--serif);font-size:72px;font-weight:400;color:#fff;line-height:1}
+.ip-unit{font-size:16px;color:rgba(255,255,255,.5);margin-top:6px}
+.ip-note{font-size:14px;color:rgba(255,255,255,.6);margin-top:20px;line-height:1.6;padding-top:20px;border-top:1px solid rgba(255,255,255,.12)}
+.invest-right{background:var(--s1);padding:40px 40px;display:grid;grid-template-columns:1fr 1fr;gap:2px;align-content:start}
+.inv-block{background:var(--bg);padding:20px 22px}
+.inv-block-title{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.inv-block p{font-size:13px;color:var(--t2);line-height:1.6}
+.invest-note{background:var(--bdim);border-left:3px solid var(--blue);padding:14px 18px;margin-top:2px;grid-column:span 2;font-size:13px;color:var(--t2);line-height:1.6}
+.invest-note strong{color:var(--blue)}
+
+@media(max-width:768px){
+  .shell{padding:0 24px}
+  nav{padding:0 24px}.nav-links{display:none}
+  .cover-wrap,.two-col,.three-col,.measure-grid,.q-wrap,.tech-grid,.field-wrap,.rm-outer,.invest-wrap,.invest-right{grid-template-columns:1fr}
+  .flow-row{grid-template-columns:1fr 1fr;gap:16px}
+  .flow-bar{display:none}
+  .span-note,.dep-box,.invest-note,.field-note,.measure-note,.rm-note{grid-column:span 1}
+  .cover-stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">RAINCODE</div>
+  <div class="nav-links">
+    <a href="#intro">Overview</a>
+    <a href="#problem">Problem</a>
+    <a href="#platform">Platform</a>
+    <a href="#measure">Measure</a>
+    <a href="#questions">Questions</a>
+    <a href="#fieldapp">Field app</a>
+    <a href="#quote">Quote</a>
+    <a href="#dispatch">Dispatch</a>
+    <a href="#flow">Full flow</a>
+    <a href="#tech">Tech</a>
+    <a href="#roadmap">Phases</a>
+    <a href="#investment">Price</a>
+  </div>
+</nav>
+
+<div class="deck">
+
+<!-- 01 COVER -->
+<section class="slide light" id="top" style="padding-top:52px;padding-bottom:0">
+<div class="shell" style="padding-bottom:0">
+  <div class="cover-wrap">
+    <div class="cover-left">
+      <div>
+        <div class="cover-kicker">Solution proposal · Confidential · June 2026</div>
+        <h1 class="cover-h1">An intelligent quoting tool<br>connected to<br><em>your systems</em></h1>
+        <p class="cover-sub">Customers quote themselves. Your team quotes on-site. Every job dispatched automatically — connected live to Business Central.</p>
+      </div>
+      <div class="cover-stats">
+        <div class="cover-stat"><div class="cs-n">3 min</div><div class="cs-l">From inquiry to quote — vs. 5–10 day industry average</div></div>
+        <div class="cover-stat"><div class="cs-n">24/7</div><div class="cs-l">Customers can quote even when the office is closed</div></div>
+        <div class="cover-stat"><div class="cs-n">5–7 wks</div><div class="cs-l">Phase 1 live from sign-off</div></div>
+        <div class="cover-stat"><div class="cs-n">195k SEK</div><div class="cs-l">Fixed price — both phases included</div></div>
+      </div>
+    </div>
+    <div class="cover-right">
+      <div>
+        <div class="cr-label">Prepared for</div>
+        <div class="cr-val">Jimmy Ekman &amp; team<br>Stängselbutiken</div>
+        <div class="cr-label">Prepared by</div>
+        <div class="cr-val">David &amp; Samir<br>Raincode</div>
+        <div class="cr-label">Date &amp; version</div>
+        <div class="cr-val">June 2026 · v1.0</div>
+      </div>
+      <div>
+        <div class="cr-divider"></div>
+        <div class="cr-tagline">"The right price, the right materials, the right crew — from the first click."</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">01</div>
+</section>
+
+<!-- 02 HOW THIS PROPOSAL IS STRUCTURED -->
+<section class="slide s1bg" id="intro">
+<div class="shell">
+  <div class="eyebrow">How this proposal is structured</div>
+  <h2>What you are about to read — step by step.</h2>
+  <div class="rule"></div>
+  <p class="lead">This proposal follows the exact journey a job takes — from the moment a customer first contacts Stängselbutiken, to the moment the crew arrives on site with the right materials.</p>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:2px">
+    <div style="background:var(--bg);padding:28px 24px;border-top:3px solid var(--blue)">
+      <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--blue);margin-bottom:10px">Pages 04–05</div>
+      <div style="font-family:var(--serif);font-size:18px;font-weight:400;margin-bottom:8px;color:var(--tx)">The platform</div>
+      <p style="font-size:13px;color:var(--t2);line-height:1.6">What we are building — a quoting tool for customers on the website, and a field app for your team on-site.</p>
+    </div>
+    <div style="background:var(--bg);padding:28px 24px;border-top:3px solid var(--teal)">
+      <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--teal);margin-bottom:10px">Pages 06–08</div>
+      <div style="font-family:var(--serif);font-size:18px;font-weight:400;margin-bottom:8px;color:var(--tx)">Measuring and quoting</div>
+      <p style="font-size:13px;color:var(--t2);line-height:1.6">How measurements are captured — drawing on a map, walking with GPS, or submitting photos. Then the questions that produce the right quote.</p>
+    </div>
+    <div style="background:var(--bg);padding:28px 24px;border-top:3px solid var(--amb)">
+      <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--amb);margin-bottom:10px">Pages 09–10</div>
+      <div style="font-family:var(--serif);font-size:18px;font-weight:400;margin-bottom:8px;color:var(--tx)">Dispatch and full flow</div>
+      <p style="font-size:13px;color:var(--t2);line-height:1.6">How an approved quote automatically creates the work order, orders materials, and dispatches the crew via Feedly and WhatsApp.</p>
+    </div>
+    <div style="background:var(--bg);padding:28px 24px;border-top:3px solid var(--t3)">
+      <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--t3);margin-bottom:10px">Page 11</div>
+      <div style="font-family:var(--serif);font-size:18px;font-weight:400;margin-bottom:8px;color:var(--tx)">Roadmap and price</div>
+      <p style="font-size:13px;color:var(--t2);line-height:1.6">The fixed price, what is included, and how we work.</p>
+    </div>
+  </div>
+  <div style="background:var(--bdim);border-left:3px solid var(--blue);padding:14px 18px;font-size:13px;color:var(--t2);line-height:1.6">
+    <strong style="color:var(--blue)">The problem this solves:</strong> Today Jimmy drives 2–3 hours to confirm a job, customers give wrong measurements, and job packets live across three different apps. This platform replaces all of that.
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">02</div>
+</section>
+
+
+<!-- 03 PROBLEM -->
+<section class="slide s1bg" id="problem">
+<div class="shell">
+  <div class="eyebrow">The problem today</div>
+  <h2>Three problems that cost time,<br>money, and jobs every week.</h2>
+  <div class="rule"></div>
+  <p class="lead">These came directly from the June 11 call. Every one of them goes away with the right system.</p>
+  <div class="three-col">
+    <div class="pain-card a1">
+      <div class="pain-num">Problem 01</div>
+      <div class="pain-q">"I drive 2–3 hours each way just to confirm the job."</div>
+      <p class="pain-b">The site visit has a 95% close rate — so it is almost always a sale. But the cost is the drive. That is 4–6 hours per job, for something a digital tool can replace entirely.</p>
+    </div>
+    <div class="pain-card a2">
+      <div class="pain-num">Problem 02</div>
+      <div class="pain-q">"It was 100 metres" — turned out to be 200.</div>
+      <p class="pain-b">Customers guess. Wrong measurements mean wrong materials ordered, costly return trips, and crews rescheduled. One wrong number can break an entire week's schedule.</p>
+    </div>
+    <div class="pain-card a3">
+      <div class="pain-num">Problem 03</div>
+      <div class="pain-q">The job lives across WhatsApp, Feedly, and SMS.</div>
+      <p class="pain-b">Subcontractors are skilled workers, not administrators. When the job packet is spread across three channels, one missed message means the wrong crew arrives with the wrong material.</p>
+    </div>
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">03</div>
+</section>
+
+<!-- 04 THE PLATFORM -->
+<section class="slide light" id="platform">
+<div class="shell">
+  <div class="eyebrow">The platform</div>
+  <h2>An intelligent and easy to use quoting tool<br>connected to your systems.</h2>
+  <div class="rule"></div>
+  <p class="lead">Both connect live to Business Central. Prices always come from BC — no manual updates, no wrong quotes.</p>
+  <div class="two-col">
+    <div class="card">
+      <span class="card-tag">For your customers</span>
+      <h3>A quote tool on the Stängselbutiken website, on phone and computer.</h3>
+      <p>Customers open it from any browser — no download needed. They measure their fence, answer a few short questions, and get a quote with a branded PDF immediately. No phone call needed.</p>
+      <div class="device-box" style="border-left:3px solid var(--blue);margin-bottom:2px">
+        <div class="device-label" style="color:var(--blue)">On a computer</div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.55">Draw the fence line directly on the satellite map. Where available, connects to the Lantmäteriet API for exact property boundaries <em style="color:var(--t3);font-style:italic">(subject to API access confirmation — see technical page)</em>.</p>
+      </div>
+      <div class="device-box" style="border-left:3px solid var(--teal);margin-bottom:16px">
+        <div class="device-label" style="color:var(--teal)">On a phone (web app — no download needed)</div>
+        <p style="font-size:13px;color:var(--t2);line-height:1.55">Draw on the map, walk the fence with GPS, or just submit photos. The customer picks whichever feels easiest.</p>
+      </div>
+      <ul class="cl">
+        <li>Instant quote from live Business Central prices</li>
+        <li>Branded PDF sent to the customer automatically</li>
+        <li>Customer record created in BC on submit</li>
+        <li>Available 24/7</li>
+      </ul>
+    </div>
+    <div class="card dk">
+      <span class="card-tag">For your internal team — sales and field staff</span>
+      <h3>A field app your staff uses on every site visit.</h3>
+      <p>Your sales team or field staff open the app when they arrive on site. They measure using the same three options — map, GPS walk, or photos — but their version is connected directly to the quote and dispatch system. No office follow-up needed.</p>
+      <ul class="cl">
+        <li>Same measuring tools: map, GPS walk, or photos</li>
+        <li>GPS traces every metre as they walk the fence</li>
+        <li>Terrain questions answered on-site</li>
+        <li>Full quote and job packet generated before leaving</li>
+        <li>Installs on any iPhone or Android — no app store</li>
+        <li>Approved quote triggers automatic crew dispatch</li>
+      </ul>
+    </div>
+  </div>
+  <div class="span-note">
+    <strong>Connected to Business Central:</strong> One price change in BC updates both tools instantly. No spreadsheets, no manual sync, no outdated rate cards.
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">04</div>
+</section>
+
+<!-- 05 MEASURING -->
+<section class="slide s1bg" id="measure">
+<div class="shell">
+  <div class="eyebrow">How to measure</div>
+  <h2>Three ways to measure the fence.<br>Use whichever is easiest — or a mix.</h2>
+  <div class="rule"></div>
+  <p class="lead">All three options produce the same result. The customer or field person just picks what works for their situation. On a computer only the map is available. On a phone all three work.</p>
+  <div class="measure-grid">
+    <div class="mcard mc1">
+      <div class="mc-device">Computer + Phone</div>
+      <div class="mc-title">Draw on the satellite map</div>
+      <p class="mc-body">Click around the fence line on a satellite image of the property. The system measures the exact length automatically. On a computer this uses the Lantmäteriet API for precise property boundaries.</p>
+      <ul class="ml">
+        <li>Most accurate — the map measures for you</li>
+        <li>Corners and sections marked as you draw</li>
+        <li>Lantmäteriet API for exact boundaries — computer, subject to access confirmation</li>
+        <li>Works in any browser — nothing to install</li>
+      </ul>
+    </div>
+    <div class="mcard mc2">
+      <div class="mc-device">Phone only</div>
+      <div class="mc-title">Walk the fence with your phone</div>
+      <p class="mc-body">Open the app and physically walk along the fence line. The GPS on the phone traces every metre in real time. When done, the exact length is calculated automatically.</p>
+      <ul class="ml">
+        <li>No guessing — GPS measures as you walk</li>
+        <li>Tap to mark corners, gates, and obstacles</li>
+        <li>Review the traced line and correct if needed</li>
+        <li>Eliminates the "100m that turned out to be 200m" problem</li>
+      </ul>
+    </div>
+    <div class="mcard mc3">
+      <div class="mc-device">Phone only</div>
+      <div class="mc-title">Photos + manual measurements</div>
+      <p class="mc-body">The digital version of the Nowski paper form — the industry standard Jimmy's team already knows. Take a photo of each fence section, then enter the approximate length manually. Photos attach to the job record as site documentation.</p>
+      <ul class="ml">
+        <li>Photo per section stays attached to the job — crew sees what they're arriving to</li>
+        <li>Customer enters length per run — same structured form every time</li>
+        <li>Lowest barrier — works for anyone who won't draw or walk</li>
+        <li>Same job object produced — no difference downstream</li>
+      </ul>
+    </div>
+  </div>
+  <div class="measure-note">
+    On a computer, only the map drawing is available. On a phone all three options work — and can be combined. For example: draw the main fence on the map, then walk a tricky section with GPS. Photo mode produces slightly less precise measurements than map or GPS — but fully structured data, far better than a phone call estimate.
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">05</div>
+</section>
+
+<!-- 06 QUESTIONNAIRE -->
+<section class="slide light" id="questions">
+<div class="shell">
+  <div class="eyebrow">Getting the quote right</div>
+  <h2>After measuring, the customer answers<br>a few short questions.</h2>
+  <div class="rule"></div>
+  <p class="lead">Once the measurements are in, the tool asks a short set of questions. The answers make sure the right materials end up on the truck — not the wrong ones.</p>
+  <div class="q-wrap">
+    <div>
+      <div class="q-step-intro">
+        <p>The most important question is about terrain. The terrain type does not change the price — it changes what material gets loaded on the truck. Getting this wrong means a rebook and a lost day.</p>
+      </div>
+      <p class="f-label" style="margin-bottom:10px">Example terrain question — customer picks one</p>
+      <div class="q-terrain-rows">
+        <div class="q-trow"><span class="qt-l">Flat grass, easy to dig</span><span class="qt-r">Concrete footings, standard driver</span></div>
+        <div class="q-trow"><span class="qt-l">Some slope, light vegetation</span><span class="qt-r">Longer posts, brush clearing crew</span></div>
+        <div class="q-trow"><span class="qt-l">Rocky or uneven ground</span><span class="qt-r">Rock anchors, no concrete</span></div>
+        <div class="q-trow"><span class="qt-l">Significant slope, heavy vegetation</span><span class="qt-r">Mountain anchors, chainsaw crew</span></div>
+        <div class="q-trow"><span class="qt-l">Extreme terrain or bedrock</span><span class="qt-r">Specialist equipment, extended brief</span></div>
+      </div>
+    </div>
+    <div>
+      <p class="f-label">Other questions in the quote</p>
+      <div class="f-rows">
+        <div class="f-row"><span class="fl">How many gates?</span><span class="fr">Count + width + type</span></div>
+        <div class="f-row"><span class="fl">Fence height</span><span class="fr">Standard or custom</span></div>
+        <div class="f-row"><span class="fl">Colour preference</span><span class="fr">Applied as modifier</span></div>
+        <div class="f-row"><span class="fl">Corners and end posts</span><span class="fr">Auto-counted from the map or entered manually</span></div>
+        <div class="f-row hl"><span class="fl">Terrain answer</span><span class="fr">Sets materials — not the price</span></div>
+      </div>
+      <p class="bc-pull">All prices come live from Business Central every time. A price change in BC shows up in both tools immediately.</p>
+    </div>
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">06</div>
+</section>
+
+<!-- 07 QUOTE -->
+<section class="slide s1bg" id="quote">
+<div class="shell">
+  <div class="eyebrow">The quote</div>
+  <h2>An instant quote connected to<br>Business Central. Automatic team alert.</h2>
+  <div class="rule"></div>
+  <p class="lead">Once measurements and questions are done, the quote is generated immediately — priced live from Business Central. The customer can accept online. The moment they do, the Stängselbutiken team gets notified.</p>
+  <div class="two-col" style="margin-bottom:2px">
+    <div class="card">
+      <span class="card-tag">The customer</span>
+      <h3>Instant quote. Accept online. No payment yet.</h3>
+      <p>The customer sees the full price and receives a branded PDF. They can accept the quote with one click — but no payment is taken. Stängselbutiken staff reviews and confirms before anything moves forward.</p>
+      <ul class="cl">
+        <li>Price comes live from Business Central — always accurate</li>
+        <li>Branded PDF generated and sent instantly</li>
+        <li>Customer accepts with one click — no checkout</li>
+        <li>Staff reviews before the job is confirmed</li>
+      </ul>
+    </div>
+    <div class="card dk">
+      <span class="card-tag">The Stängselbutiken team</span>
+      <h3>A notification goes out the moment the customer accepts.</h3>
+      <p>As soon as the customer accepts, the team receives a message with all the job details — measurements, terrain type, and materials needed. Staff can review and dispatch the right crew straight away.</p>
+      <ul class="cl">
+        <li>Automatic notification on customer acceptance</li>
+        <li>All job details included — nothing to re-enter</li>
+        <li>Staff can assign and dispatch the right crew</li>
+        <li>No manual follow-up needed</li>
+      </ul>
+    </div>
+  </div>
+  <div class="span-note">
+    <strong>Live from Business Central:</strong> The price the customer sees is pulled directly from BC — the same prices your team works with. No manual calculation, no risk of quoting the wrong number.
+  </div>
+  <div class="span-note" style="margin-top:2px;border-left-color:var(--teal);background:var(--teal-bg)">
+    <strong style="color:var(--teal)">Warm lead follow-up (Phase 2):</strong> Quotes that are accepted but haven't converted to a confirmed job within a set window are automatically flagged in Business Central — giving your team a nudge to follow up at the right moment. No separate CRM needed. Your customers already live in BC.
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">07</div>
+</section>
+
+<!-- 08 FIELD APP -->
+<section class="slide s1bg" id="fieldapp">
+<div class="shell">
+  <div class="eyebrow">Internal tool — for your sales and field staff only</div>
+  <h2>Your staff arrives on site.<br>Leaves with a signed quote.</h2>
+  <div class="rule"></div>
+  <div class="field-wrap">
+    <div class="field-main">
+      <div class="fa-tag">Internal field app — installs on iPhone and Android, no app store needed</div>
+      <h3>The same measuring tools — but connected to the full job system.</h3>
+      <p>This is the app your sales team and field staff use. It looks similar to the customer tool, but once a quote is approved on-site it automatically creates the job packet, orders materials, and dispatches the crew. Nothing needs to be done in the office.</p>
+      <ul class="cl">
+        <li>Walk the fence — GPS traces every metre in real time</li>
+        <li>Tap to mark corners, gates, and obstacles</li>
+        <li>Attach photos per section</li>
+        <li>Answer terrain questions — materials set automatically</li>
+        <li>Quote and full job packet generated before leaving</li>
+        <li>Approval triggers crew dispatch — no manual follow-up</li>
+      </ul>
+    </div>
+    <div class="field-steps">
+      <div class="fs-label">How a site visit works with the app</div>
+      <div class="fstep on"><span class="fstep-n">01</span><div><div class="fstep-t">Arrive on site</div><div class="fstep-b">Open the app. GPS is ready. Terrain questionnaire loads automatically.</div></div></div>
+      <div class="fstep on"><span class="fstep-n">02</span><div><div class="fstep-t">Measure the fence</div><div class="fstep-b">Walk the line, draw on the map, or photograph sections. GPS traces every metre.</div></div></div>
+      <div class="fstep on"><span class="fstep-n">03</span><div><div class="fstep-t">Answer the questions</div><div class="fstep-b">Pick terrain type. Confirm gates, height, colour. Takes under a minute.</div></div></div>
+      <div class="fstep on"><span class="fstep-n">04</span><div><div class="fstep-t">Review the quote</div><div class="fstep-b">Check the figures. Correct any measurements if needed. Present to the customer.</div></div></div>
+      <div class="fstep on"><span class="fstep-n">05</span><div><div class="fstep-t">Approve and go</div><div class="fstep-b">One tap. Quote confirmed. Job packet created. Crew dispatch starts automatically.</div></div></div>
+    </div>
+  </div>
+  <div class="field-note">
+    <strong>No more verification visits.</strong> Today your team drives 2–3 hours to confirm a job before quoting. With the field app, the first visit is the quoting visit — a full quote built in under 2 minutes on-site, and the crew dispatched the same day. Jimmy can walk a property, price it, and send the job packet before he gets back to the car.
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">08</div>
+</section>
+
+<!-- 09 DISPATCH -->
+<section class="slide light" id="dispatch">
+<div class="shell">
+  <div class="eyebrow">Crew dispatch</div>
+  <h2>Quote approved. Job packet sent.<br>No messages to write.</h2>
+  <div class="rule"></div>
+  <p class="lead">Today the job lives across WhatsApp, Feedly, and SMS. One missed message and the wrong crew shows up with the wrong material. This platform replaces all of that with two automatic channels.</p>
+  <div class="two-col">
+    <div class="card">
+      <span class="card-tag">Feedly — for your crew</span>
+      <h3>Work order pushed to Feedly the moment a quote is approved.</h3>
+      <p>No one writes anything manually. The work order is created automatically from the quote — with the date, site address, fence measurements, terrain type, and material list already filled in.</p>
+      <ul class="cl">
+        <li>Work order created automatically on approval</li>
+        <li>All job details come directly from the quote — nothing re-entered</li>
+        <li>All relevant crew members notified through Feedly</li>
+        <li>One place for all jobs — nothing lost in a chat thread</li>
+      </ul>
+    </div>
+    <div class="card dk">
+      <span class="card-tag">WhatsApp PDF — for subcontractors</span>
+      <h3>A job PDF that any subcontractor can open from a WhatsApp link.</h3>
+      <p>Every approved job generates a branded PDF with everything a subcontractor needs. One shareable link — works on any phone, opens in the browser. No app, no login, no friction on their side.</p>
+      <ul class="cl">
+        <li>PDF has the date, address, fence plan, terrain notes, and materials</li>
+        <li>Materials list comes from the terrain answer — no manual input</li>
+        <li>Share via WhatsApp in one tap</li>
+        <li>Subcontractors need nothing except a phone</li>
+      </ul>
+    </div>
+  </div>
+  <div class="span-note">
+    <strong>Everything in one place.</strong> The quote, the order, the materials, and the crew brief all come from the same source. No syncing between apps, no version confusion, no missed messages.
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">09</div>
+</section>
+
+<!-- 10 FULL FLOW -->
+<section class="slide s1bg" id="flow">
+<div class="shell">
+  <div class="eyebrow">The full journey</div>
+  <h2>From first click to crew on site.</h2>
+  <div class="rule"></div>
+  <div style="position:relative;padding-top:8px;margin-bottom:32px">
+    <div class="flow-bar"></div>
+    <div class="flow-row" style="grid-template-columns:repeat(7,1fr)">
+      <div class="fstop on"><div class="fdot">01</div><div class="ft">Customer opens the tool</div><div class="fb">Website or phone. No download needed.</div></div>
+      <div class="fstop"><div class="fdot">02</div><div class="ft">Measures the fence</div><div class="fb">Map, GPS walk, or photo + pin.</div></div>
+      <div class="fstop"><div class="fdot">03</div><div class="ft">Answers questions</div><div class="fb">Terrain, gates, height, colour.</div></div>
+      <div class="fstop"><div class="fdot">04</div><div class="ft">Gets a quote</div><div class="fb">Live BC prices. Branded PDF sent instantly.</div></div>
+      <div class="fstop"><div class="fdot">05</div><div class="ft">Crew dispatched</div><div class="fb">Stängselbutiken staff reviews and assigns the crew via Feedly + WhatsApp PDF.</div></div>
+      <div class="fstop"><div class="fdot">06</div><div class="ft">Record in BC</div><div class="fb">Customer record + quote written to Business Central. Supplier order push added in Phase 2.</div></div>
+      <div class="fstop"><div class="fdot">07</div><div class="ft">Warm lead flag</div><div class="fb">Quotes not closed within set window are flagged in BC — Phase 2 follow-up automation.</div></div>
+    </div>
+  </div>
+  <div class="flow-note">
+    <strong>Fully automatic from step 4</strong>
+    <p>Once the quote is accepted, everything flows without anyone writing a message or entering data manually.</p>
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">10</div>
+</section>
+
+<!-- 11 TECH -->
+<section class="slide light" id="tech">
+<div class="shell">
+  <div class="eyebrow">Technical overview</div>
+  <h2>How everything connects.</h2>
+  <div class="rule"></div>
+
+  <!-- Central BC block -->
+  <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:2px;margin-bottom:2px;align-items:stretch">
+
+    <!-- Left: inputs -->
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="background:var(--s1);padding:20px 24px;border-left:3px solid var(--teal);flex:1">
+        <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin-bottom:6px">Customer tool</div>
+        <div style="font-size:14px;font-weight:500;color:var(--tx);margin-bottom:4px">Website + web app</div>
+        <p style="font-size:12px;color:var(--t3);line-height:1.5">Computer or phone. Map draw, GPS walk, or photo + pin.</p>
+      </div>
+      <div style="background:var(--s1);padding:20px 24px;border-left:3px solid var(--blue);flex:1">
+        <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin-bottom:6px">Field app</div>
+        <div style="font-size:14px;font-weight:500;color:var(--tx);margin-bottom:4px">Internal team — iPhone + Android</div>
+        <p style="font-size:12px;color:var(--t3);line-height:1.5">Same measuring tools. Full job packet generated on-site.</p>
+      </div>
+    </div>
+
+    <!-- Centre: BC -->
+    <div style="background:var(--blue2);color:#eef1f7;padding:32px 36px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-width:220px;position:relative">
+      <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:10px">Connected to</div>
+      <div style="font-family:var(--serif);font-size:22px;font-weight:400;color:#fff;line-height:1.2;margin-bottom:10px">Business<br>Central</div>
+      <div style="width:32px;height:2px;background:var(--blue-l);margin-bottom:10px"></div>
+      <p style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.5">Live prices<br>Customer records<br>Orders + materials</p>
+    </div>
+
+    <!-- Right: outputs -->
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="background:var(--s1);padding:20px 24px;border-right:3px solid var(--teal);flex:1">
+        <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin-bottom:6px">PDF Quote</div>
+        <div style="font-size:14px;font-weight:500;color:var(--tx);margin-bottom:4px">Branded, instant</div>
+        <p style="font-size:12px;color:var(--t3);line-height:1.5">Generated and sent to the customer automatically.</p>
+      </div>
+      <div style="background:var(--s1);padding:20px 24px;border-right:3px solid var(--blue);flex:1">
+        <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin-bottom:6px">Dispatch</div>
+        <div style="font-size:14px;font-weight:500;color:var(--tx);margin-bottom:4px">Feedly + WhatsApp PDF</div>
+        <p style="font-size:12px;color:var(--t3);line-height:1.5">Work order and materials sent to crew automatically.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="dep-box">
+    <strong>Two things to confirm before build starts</strong>
+    <p>1. Business Central API access — Mattias to confirm credentials. &nbsp; 2. Lantmäteriet boundary API — Jimmy to approve, or we use Google Maps satellite for v1.</p>
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">11</div>
+</section>
+
+<!-- 12 ROADMAP -->
+<section class="slide s1bg" id="roadmap">
+<div class="shell">
+  <div class="eyebrow">Development phases</div>
+  <h2>The full project. Two phases.<br>One fixed price.</h2>
+  <div class="rule"></div>
+  <p class="lead" style="margin-bottom:28px">We work in phases so you can see progress quickly. Phase 1 is the full working product. Phase 2 adds precision and automation on top.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px">
+
+    <div style="display:flex;flex-direction:column">
+      <div style="background:var(--blue);padding:24px 28px">
+        <div style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px">Phase 1</div>
+        <div style="font-family:var(--serif);font-size:24px;font-weight:400;color:#fff;margin-bottom:4px">The working platform</div>
+        <div style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.5)">5–7 weeks from sign-off</div>
+      </div>
+      <div style="background:var(--bg);padding:20px 28px;border:1px solid var(--br);border-top:none;flex:1">
+        <ul style="list-style:none">
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue);flex-shrink:0">—</span>Web tool — satellite map draw</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue);flex-shrink:0">—</span>Google Maps + Elevation API integration</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue);flex-shrink:0">—</span>Terrain questionnaire → material BOM</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue);flex-shrink:0">—</span>Live pricing pulled from Business Central</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue);flex-shrink:0">—</span>Instant quote + branded PDF generation</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue);flex-shrink:0">—</span>Lead written to Business Central on submission</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue);flex-shrink:0">—</span>GPS walk field app (basic mode)</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;display:flex;gap:10px"><span style="color:var(--blue);flex-shrink:0">—</span>Feedly push + WhatsApp-shareable PDF link</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column">
+      <div style="background:var(--blue2);padding:24px 28px">
+        <div style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px">Phase 2</div>
+        <div style="font-family:var(--serif);font-size:24px;font-weight:400;color:#fff;margin-bottom:4px">More automation</div>
+        <div style="font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.5)">+3–4 weeks after Phase 1</div>
+      </div>
+      <div style="background:var(--bg);padding:20px 28px;border:1px solid var(--br);border-top:none;flex:1">
+        <ul style="list-style:none">
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue2);flex-shrink:0">—</span>Lantmäteriet boundary line pull for map mode</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue2);flex-shrink:0">—</span>GPS accuracy indicator + manual correction UI</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue2);flex-shrink:0">—</span>Quote history portal with client login</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue2);flex-shrink:0">—</span>BC supplier material order push (full automation)</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue2);flex-shrink:0">—</span>Automated warm lead follow-up flag in BC</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue2);flex-shrink:0">—</span>Admin dashboard — manage rates, view quote history</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;border-bottom:1px solid var(--br);display:flex;gap:10px"><span style="color:var(--blue2);flex-shrink:0">—</span>Full Feedly API integration</li>
+          <li style="font-size:13px;color:var(--t2);padding:8px 0;display:flex;gap:10px"><span style="color:var(--blue2);flex-shrink:0">—</span>Photo mode fallback (Nowski digital form)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="background:var(--bdim);border-left:3px solid var(--blue);padding:14px 20px;font-size:13px;color:var(--t2);line-height:1.6">
+    <strong style="color:var(--blue)">Total timeline: 8–11 weeks.</strong> Phase 1 ships in 5–7 weeks and is fully usable from day one — you can start quoting immediately. Phase 2 builds on top.
+  </div>
+</div>
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">12</div>
+</section>
+
+<!-- 13 INVESTMENT -->
+<section class="slide light" id="investment">
+<div class="shell">
+  <div class="eyebrow">The Investment</div>
+  <h2>Fixed price. Everything included.</h2>
+  <div class="rule"></div>
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:2px;margin-bottom:2px">
+    <div style="background:var(--blue);color:#fff;padding:52px 56px;display:flex;flex-direction:column;justify-content:center;min-width:320px">
+      <div style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:14px">Fixed price</div>
+      <div style="font-family:var(--serif);font-size:80px;font-weight:400;color:#fff;line-height:1">195 000</div>
+      <div style="font-size:16px;color:rgba(255,255,255,.5);margin-top:8px">SEK excl. VAT</div>
+    </div>
+    <div style="background:var(--s1);padding:40px 40px;display:flex;flex-direction:column;justify-content:center;gap:12px">
+      <div style="font-family:var(--serif);font-size:22px;font-weight:400;color:var(--tx);margin-bottom:4px">What you get</div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div style="background:var(--bg);padding:12px 16px;font-size:13px;color:var(--t2);display:flex;gap:10px;align-items:center"><span style="color:var(--blue);font-weight:700">—</span>Customer quote tool — website and web app</div>
+        <div style="background:var(--bg);padding:12px 16px;font-size:13px;color:var(--t2);display:flex;gap:10px;align-items:center"><span style="color:var(--blue);font-weight:700">—</span>Field app for your team — iPhone and Android</div>
+        <div style="background:var(--bg);padding:12px 16px;font-size:13px;color:var(--t2);display:flex;gap:10px;align-items:center"><span style="color:var(--blue);font-weight:700">—</span>Live connection to Business Central</div>
+        <div style="background:var(--bg);padding:12px 16px;font-size:13px;color:var(--t2);display:flex;gap:10px;align-items:center"><span style="color:var(--blue);font-weight:700">—</span>Automatic dispatch via Feedly and WhatsApp</div>
+        <div style="background:var(--bg);padding:12px 16px;font-size:13px;color:var(--t2);display:flex;gap:10px;align-items:center"><span style="color:var(--blue);font-weight:700">—</span>Hosting, launch, and handover included</div>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--bdim);border-left:3px solid var(--blue);padding:14px 18px;font-size:13px;color:var(--t2);line-height:1.6">
+    <strong style="color:var(--blue)">Fixed price means fixed price.</strong> We agree the full scope — both phases — before we start. No surprises, no hourly billing.
+  </div>
+</div>
+
+<div class="brandmark">RAINCODE</div>
+<div class="pageno">13 / 13</div>
+</section>
+
+
+</div>
+</body>
+</html>
